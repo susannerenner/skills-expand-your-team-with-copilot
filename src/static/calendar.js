@@ -103,7 +103,24 @@ const ActivityCalendar = (() => {
     tooltip.className = "calendar-tooltip hidden";
     tooltip.id = "calendar-tooltip";
     tooltip.setAttribute("role", "tooltip");
-    const hideDetails = () => tooltip.classList.add("hidden");
+    tooltip.tabIndex = 0;
+    let hideTimer;
+    const keepDetails = () => clearTimeout(hideTimer);
+    const hideDetails = () => {
+      keepDetails();
+      tooltip.classList.add("hidden");
+    };
+    const hideDetailsSoon = () => {
+      keepDetails();
+      hideTimer = setTimeout(hideDetails, 150);
+    };
+    tooltip.addEventListener("mouseenter", keepDetails);
+    tooltip.addEventListener("mouseleave", hideDetailsSoon);
+    tooltip.addEventListener("focus", keepDetails);
+    tooltip.addEventListener("blur", hideDetails);
+    tooltip.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") hideDetails();
+    });
     scroller.addEventListener("scroll", hideDetails);
     eventsByDay.forEach((dayEvents, index) => {
       const column = document.createElement("div");
@@ -131,6 +148,7 @@ const ActivityCalendar = (() => {
         ].filter(Boolean).join("\n");
         button.setAttribute("aria-label", `${name}, ${days[index]}, ${timeLabel(start)}. ${details.participants.length} of ${details.max_participants} enrolled. Open card.`);
         const showDetails = () => {
+          keepDetails();
           tooltip.textContent = description;
           tooltip.classList.remove("hidden");
           button.setAttribute("aria-describedby", tooltip.id);
@@ -142,8 +160,8 @@ const ActivityCalendar = (() => {
         };
         button.addEventListener("mouseenter", showDetails);
         button.addEventListener("focus", showDetails);
-        button.addEventListener("mouseleave", hideDetails);
-        button.addEventListener("blur", hideDetails);
+        button.addEventListener("mouseleave", hideDetailsSoon);
+        button.addEventListener("blur", hideDetailsSoon);
         button.addEventListener("keydown", (event) => {
           if (event.key === "Escape") hideDetails();
         });
