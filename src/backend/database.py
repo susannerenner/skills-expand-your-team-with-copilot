@@ -26,9 +26,16 @@ def init_database():
             activities_collection.insert_one({"_id": name, **details})
 
     # Ensure newly added activities are available in existing databases
+    manga_details = initial_activities["Manga Maniacs"]
     activities_collection.update_one(
         {"_id": "Manga Maniacs"},
-        {"$setOnInsert": initial_activities["Manga Maniacs"]},
+        {
+            "$set": {"description": manga_details["description"]},
+            "$setOnInsert": {
+                key: value for key, value in manga_details.items()
+                if key != "description"
+            }
+        },
         upsert=True
     )
             
@@ -172,7 +179,7 @@ initial_activities = {
         "participants": ["william@mergington.edu", "jacob@mergington.edu"]
     },
     "Manga Maniacs": {
-        "description": "Explore the fantastic stories of the most interesting characters from Japanese Manga (graphic novels).",
+        "description": "Dive into epic adventures, meet unforgettable heroes, and discover the art and storytelling that make Japanese manga so captivating!",
         "schedule": "Tuesdays, 7:00 PM",
         "schedule_details": {
             "days": ["Tuesday"],
