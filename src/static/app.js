@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const difficultyFilters = document.querySelectorAll(".difficulty-filter");
   const dayFilters = document.querySelectorAll(".day-filter");
   const timeFilters = document.querySelectorAll(".time-filter");
+  const viewToggles = document.querySelectorAll(".view-toggle");
 
   // Authentication elements
   const loginButton = document.getElementById("login-button");
@@ -62,6 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let searchQuery = "";
   let currentDay = "";
   let currentTimeRange = "";
+  let currentView = "cards";
   const sharedActivity = new URLSearchParams(window.location.search).get("activity");
   let sharedActivityShown = false;
 
@@ -440,6 +442,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function displayFilteredActivities() {
     // Clear the activities list
     activitiesList.innerHTML = "";
+    activitiesList.classList.toggle("calendar-view", currentView === "calendar");
 
     // Apply client-side filtering - this handles category filter and search, plus weekend filter
     let filteredActivities = {};
@@ -505,10 +508,23 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Display filtered activities
-    Object.entries(filteredActivities).forEach(([name, details]) => {
-      renderActivityCard(name, details);
-    });
+    // Both views use the same filtered activities.
+    if (currentView === "calendar") {
+      activitiesList.appendChild(ActivityCalendar.render(filteredActivities, {
+        day: currentDay,
+        weekend: currentTimeRange === "weekend",
+        onSelect: (name) => {
+          setActivityView("cards");
+          const card = document.getElementById(ActivitySharing.getActivityId(name));
+          card.scrollIntoView({ block: "center" });
+          card.focus({ preventScroll: true });
+        },
+      }));
+    } else {
+      Object.entries(filteredActivities).forEach(([name, details]) => {
+        renderActivityCard(name, details);
+      });
+    }
 
     if (sharedActivity && !sharedActivityShown) {
       const sharedCard = document.getElementById(ActivitySharing.getActivityId(sharedActivity));
@@ -519,6 +535,18 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   }
+
+  function setActivityView(view) {
+    currentView = view;
+    viewToggles.forEach((button) => {
+      button.setAttribute("aria-pressed", String(button.dataset.view === view));
+    });
+    displayFilteredActivities();
+  }
+
+  viewToggles.forEach((button) => {
+    button.addEventListener("click", () => setActivityView(button.dataset.view));
+  });
 
   // Function to render a single activity card
   function renderActivityCard(name, details) {
