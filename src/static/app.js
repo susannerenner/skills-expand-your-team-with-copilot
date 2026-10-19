@@ -25,14 +25,34 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("login-form");
   const closeLoginModal = document.querySelector(".close-login-modal");
   const loginMessage = document.getElementById("login-message");
+  const themeToggle = document.getElementById("theme-toggle");
 
-  // Activity categories with corresponding colors
+  function setDarkMode(enabled) {
+    document.documentElement.dataset.theme = enabled ? "dark" : "light";
+    themeToggle.setAttribute("aria-pressed", String(enabled));
+    themeToggle.setAttribute(
+      "aria-label",
+      `Switch to ${enabled ? "light" : "dark"} mode`
+    );
+    themeToggle.lastElementChild.textContent = enabled
+      ? "Light mode"
+      : "Dark mode";
+  }
+
+  setDarkMode(localStorage.getItem("theme") === "dark");
+  themeToggle.addEventListener("click", () => {
+    const enabled = document.documentElement.dataset.theme !== "dark";
+    setDarkMode(enabled);
+    localStorage.setItem("theme", enabled ? "dark" : "light");
+  });
+
+  // Activity categories
   const activityTypes = {
-    sports: { label: "Sports", color: "#e8f5e9", textColor: "#2e7d32" },
-    arts: { label: "Arts", color: "#f3e5f5", textColor: "#7b1fa2" },
-    academic: { label: "Academic", color: "#e3f2fd", textColor: "#1565c0" },
-    community: { label: "Community", color: "#fff3e0", textColor: "#e65100" },
-    technology: { label: "Technology", color: "#e8eaf6", textColor: "#3949ab" },
+    sports: { label: "Sports" },
+    arts: { label: "Arts" },
+    academic: { label: "Academic" },
+    community: { label: "Community" },
+    technology: { label: "Technology" },
   };
 
   // State for activities and filters
@@ -531,7 +551,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Create activity tag
     const tagHtml = `
-      <span class="activity-tag" style="background-color: ${typeInfo.color}; color: ${typeInfo.textColor}">
+      <span class="activity-tag activity-tag-${activityType}">
         ${typeInfo.label}
       </span>
     `;
@@ -737,11 +757,7 @@ document.addEventListener("DOMContentLoaded", () => {
       document.body.appendChild(confirmDialog);
 
       // Style the buttons
-      const cancelBtn = confirmDialog.querySelector("#cancel-button");
       const confirmBtn = confirmDialog.querySelector("#confirm-button");
-
-      cancelBtn.style.backgroundColor = "#f1f1f1";
-      cancelBtn.style.color = "#333";
 
       confirmBtn.style.backgroundColor = "#dc3545";
       confirmBtn.style.color = "white";

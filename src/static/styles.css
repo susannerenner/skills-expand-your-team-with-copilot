@@ -32,6 +32,28 @@
   --info-light: #d1ecf1;
 }
 
+:root[data-theme="dark"] {
+  --primary: #3949ab;
+  --primary-light: #7986cb;
+  --primary-dark: #1a237e;
+  --background: #121212;
+  --surface: #1e1e1e;
+  --text-primary: #f1f1f1;
+  --text-secondary: #b0b0b0;
+  --border: #3c3c3c;
+  --border-light: #333333;
+  --border-focus: #5b5b5b;
+  --success: #81c784;
+  --success-light: #1b3a20;
+  --warning: #ffb74d;
+  --warning-light: #3b2e16;
+  --error: #ef9a9a;
+  --error-light: #3b1f1f;
+  --info: #80deea;
+  --info-light: #18383d;
+  color-scheme: dark;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -232,14 +254,62 @@ section h3 {
   position: absolute;
   top: 8px;
   right: 8px;
-  background: #e8eaf6;
-  color: #3949ab;
   font-size: 0.65rem;
   font-weight: bold;
   padding: 2px 6px;
   border-radius: 10px;
   text-transform: uppercase;
   letter-spacing: 0.3px;
+}
+
+.activity-tag-sports {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.activity-tag-arts {
+  background: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.activity-tag-academic {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.activity-tag-community {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.activity-tag-technology {
+  background: #e8eaf6;
+  color: #3949ab;
+}
+
+:root[data-theme="dark"] .activity-tag-sports {
+  background: #1b3a20;
+  color: #a5d6a7;
+}
+
+:root[data-theme="dark"] .activity-tag-arts {
+  background: #38223d;
+  color: #ce93d8;
+}
+
+:root[data-theme="dark"] .activity-tag-academic {
+  background: #1c2f40;
+  color: #90caf9;
+}
+
+:root[data-theme="dark"] .activity-tag-community {
+  background: #3b2e16;
+  color: #ffcc80;
+}
+
+:root[data-theme="dark"] .activity-tag-technology {
+  background: #222b50;
+  color: #9fa8da;
 }
 
 /* Capacity Indicator */
@@ -333,6 +403,19 @@ button {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.2s;
+}
+
+input,
+textarea,
+select {
+  background-color: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.cancel-btn {
+  background-color: var(--border-light);
+  color: var(--text-primary);
 }
 
 /* Tooltip styles */
@@ -636,6 +719,10 @@ footer {
 
 /* Responsive adjustments for mobile */
 @media (max-width: 767px) {
+  header {
+    padding-top: 48px;
+  }
+
   .sidebar-filters {
     margin-bottom: 15px;
   }
@@ -658,6 +745,8 @@ footer {
   position: absolute;
   top: 10px;
   right: 15px;
+  display: flex;
+  gap: 8px;
 }
 
 #user-status {
